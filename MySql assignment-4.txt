@@ -1,0 +1,250 @@
+#Table 1
+ CREATE TABLE orders1( 
+    order_id INT PRIMARY KEY, 
+    customer_id INT, order_date DATE, 
+    total_amount DECIMAL(10,2)); 
+#Table 2
+ CREATE TABLE payments( payment_id INT PRIMARY KEY, 
+ order_id INT, 
+ payment_date DATE,
+ amount DECIMAL(10,2));
+
+ #inserting data
+ INSERT INTO orders1 VALUES
+(1, 101, '2024-01-10', 2500.00),
+(2, 102, '2024-01-12', 1800.00),
+(3, 103, '2024-01-15', 3200.00),
+(4, 101, '2024-01-20', 1500.00),
+(5, 104, '2024-01-25', 4000.00);
+
+INSERT INTO payments VALUES
+(201, 1, '2024-01-11', 2500.00),
+(202, 2, '2024-01-13', 1800.00),
+(203, 3, '2024-01-16', 3000.00),
+(204, 5, '2024-01-26', 4000.00),
+(205, 6, '2024-01-28', 1200.00);
+
+#data retrieval 
+SELECT * FROM orders1;
+SELECT * FROM payments;
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+2|102|2024-01-12|1800.00
+3|103|2024-01-15|3200.00
+4|101|2024-01-20|1500.00
+5|104|2024-01-25|4000.00
+payment_id|order_id|payment_date|amount
+201|1|2024-01-11|2500.00
+202|2|2024-01-13|1800.00
+203|3|2024-01-16|3000.00
+204|5|2024-01-26|4000.00
+205|6|2024-01-28|1200.00
+
+#where condition
+SELECT * FROM orders1 WHERE total_amount > 2000;
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+5|104|2024-01-25|4000.00
+
+#agregate functions
+SELECT SUM(total_amount) AS total_sales FROM orders1;
+SELECT AVG(total_amount) AS avg_order_value FROM orders1;
+SELECT MAX(total_amount) FROM orders1;
+SELECT MIN(total_amount) FROM orders1;
+SELECT COUNT(*) AS total_orders FROM orders1;
+
+---output---
+total_sales
+13000.00
+avg_order_value
+2600.000000
+MAX(total_amount)
+4000.00
+MIN(total_amount)
+1500.00
+total_orders
+5
+
+#LOGICAL OPERATORS (AND / OR)
+SELECT * FROM orders 
+WHERE total_amount > 2000 AND customer_id = 101;
+SELECT * FROM orders 
+WHERE total_amount > 3000 OR customer_id = 102;
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+5|104|2024-01-25|4000.00
+order_id|customer_id|order_date|total_amount
+1002|2|2023-07-19|19800.00
+1003|4|2023-07-20|7600.00
+1006|15|2023-07-21|9000.00
+1007|3|2023-07-22|58600.00
+1011|13|2023-07-23|72000.00
+1012|9|2023-07-24|6500.00
+1013|2|2023-07-25|4500.00
+1019|7|2023-08-20|4500.00
+1027|15|2023-09-25|3650.00
+1042|15|2023-12-05|8000.01
+1043|1|2023-12-10|4200.00
+
+
+#order by
+SELECT * FROM orders1 ORDER BY total_amount ASC;
+SELECT * FROM orders1 ORDER BY order_date DESC;
+
+---output---
+order_id|customer_id|order_date|total_amount
+4|101|2024-01-20|1500.00
+2|102|2024-01-12|1800.00
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+5|104|2024-01-25|4000.00
+order_id|customer_id|order_date|total_amount
+5|104|2024-01-25|4000.00
+4|101|2024-01-20|1500.00
+3|103|2024-01-15|3200.00
+2|102|2024-01-12|1800.00
+1|101|2024-01-10|2500.00
+
+#BETWEEN
+SELECT * FROM orders1 WHERE total_amount BETWEEN 2000 AND 4000;
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+5|104|2024-01-25|4000.00
+
+#IN / NOT IN
+SELECT * FROM orders1 WHERE customer_id IN (101, 103);
+SELECT * FROM orders1 WHERE customer_id NOT IN (102);
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+4|101|2024-01-20|1500.00
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+3|103|2024-01-15|3200.00
+4|101|2024-01-20|1500.00
+5|104|2024-01-25|4000.00
+
+#PATTERN MATCHING (LIKE)
+SELECT * FROM orders1 
+WHERE order_id  LIKE '%1%';
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+
+#GROUP BY
+SELECT customer_id, SUM(total_amount) AS total_spent FROM orders1 GROUP BY customer_id;
+
+---output---
+customer_id|total_spent
+101|4000.00
+102|1800.00
+103|3200.00
+104|4000.00
+
+#HAVING
+SELECT customer_id, SUM(total_amount) AS total_spent FROM orders1 GROUP BY customer_id HAVING total_spent > 3000;
+
+---output---
+customer_id|total_spent
+101|4000.00
+103|3200.00
+104|4000.00
+
+
+#JOINS
+SELECT o.order_id, o.total_amount, p.payment_date
+FROM orders1 o
+INNER JOIN payments p
+ON o.order_id = p.order_id;
+
+---output---
+order_id|total_amount|payment_date
+1|2500.00|2024-01-11
+2|1800.00|2024-01-13
+3|3200.00|2024-01-16
+5|4000.00|2024-01-26
+
+
+SELECT o.order_id, o.total_amount, p.amount
+FROM orders1 o
+LEFT JOIN payments p ON o.order_id = p.order_id
+UNION
+SELECT o.order_id, o.total_amount, p.amount
+FROM orders1 o
+RIGHT JOIN payments p ON o.order_id = p.order_id;
+
+---output---
+order_id|total_amount|amount
+1|2500.00|2500.00
+2|1800.00|1800.00
+3|3200.00|3000.00
+4|1500.00|NULL
+5|4000.00|4000.00
+NULL|NULL|1200.00
+
+#SUBQUERIES
+SELECT * FROM orders1
+WHERE customer_id IN (
+    SELECT customer_id FROM orders1 GROUP BY customer_id HAVING COUNT(*) > 1
+);
+
+---output---
+order_id|customer_id|order_date|total_amount
+1|101|2024-01-10|2500.00
+4|101|2024-01-20|1500.00
+
+
+#CASE STATEMENT
+SELECT order_id, total_amount,
+CASE
+    WHEN total_amount >= 3000 THEN 'High Value'
+    WHEN total_amount >= 2000 THEN 'Medium Value'
+    ELSE 'Low Value'
+END AS order_type
+FROM orders1;
+
+---output---
+order_id|total_amount|order_type
+1|2500.00|Medium Value
+2|1800.00|Low Value
+3|3200.00|High Value
+4|1500.00|Low Value
+5|4000.00|High Value
+
+#VIEW
+CREATE VIEW order_payment_view AS
+SELECT o.order_id, o.customer_id, o.total_amount, p.payment_date, p.amount
+FROM orders1 o
+LEFT JOIN payments p
+ON o.order_id = p.order_id;
+
+SELECT * FROM order_payment_view
+
+---output---
+order_id|customer_id|total_amount|payment_date|amount
+1|101|2500.00|2024-01-11|2500.00
+2|102|1800.00|2024-01-13|1800.00
+3|103|3200.00|2024-01-16|3000.00
+4|101|1500.00|NULL|NULL
+5|104|4000.00|2024-01-26|4000.00
+
+
+
+
+
+
+
