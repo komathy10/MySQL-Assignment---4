@@ -2,8 +2,8 @@ MySQL Project
 This project demonstrates basic to intermediate MySQL concepts using two tables: orders and payments.
 
 *SQL Concepts Covered*
-Data insertion
-Basic data retrieval (SELECT, WHERE)
+-Data insertion
+-Basic data retrieval (SELECT, WHERE)
 Aggregate functions 
 Logical operators 
 Sorting (ORDER BY)
@@ -15,6 +15,6 @@ Subqueries
 CASE statements
 VIEW creation
 
-Purpose
+Purpose-
 This project helps understand how to analyze order and payment data using SQL queries.
 
